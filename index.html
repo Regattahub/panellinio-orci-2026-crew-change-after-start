@@ -1011,85 +1011,110 @@ const NOTICE_INFO_TEXT =
     // 2. UNIQUE NAMES ΤΗΣ JOTFORM
     // =========================================
 
-   const fieldNames = {
-  yacht_name: "boatName",
-  sail_letters: "sailLetters",
-  sail_number: "sailNumber",
-  yacht_type: "boatType",
-  club: "club",
+const fieldNames = {
+  // ΣΤΟΙΧΕΙΑ ΣΚΑΦΟΥΣ
+  yacht_name: "age",
+  sail_letters: "input298",
+  sail_number: "typeA48",
+  yacht_type: "age13",
+  club: "input17",
+
+  // ΠΙΣΤΟΠΟΙΗΤΙΚΟ
   aph: "APH",
   cert_date: "input15",
-  cert_type: "certificateType",
-  saronic_cat: "category",
-      aph_club: "typeA419",
-      aph_intl: "typeA416",
-      aph_ns: "typeA417",
-      aph_dh: "typeA412",
-      last_certificate: "typeA426",
-      special_cat: "typeA437",
-      aph_initial: "typeA439",
-      dynamic_allowance: "dynamic_allowance",
-      orc_class_check: "orc_class_check",
-captain_name: "skipperName",
-captain_club: "skipperClub",
-captain_card: "skipperCard",
-     original_submission_id: "originalSubmissionId",
-crew_text: "input514",
-crew_1_name: "crew1_name",
-crew_1_card: "crew1_card",
-crew_1_club: "crew1_club",
+  cert_type: "input207",
+  saronic_cat: "input418",
 
-crew_2_name: "crew2_name",
-crew_2_card: "crew2_card",
-crew_2_club: "crew2_club",
+  aph_club: "typeA419",
+  aph_intl: "typeA416",
+  aph_ns: "typeA417",
+  aph_dh: "typeA412",
+  last_certificate: "typeA426",
+  special_cat: "typeA437",
+  aph_initial: "typeA439",
+  dynamic_allowance: "dynamic_allowance",
+  orc_class_check: "orc_class_check",
 
-crew_3_name: "crew3_name",
-crew_3_card: "crew3_card",
-crew_3_club: "crew3_club",
+  // ΚΥΒΕΡΝΗΤΗΣ
+  captain_name: "typeA93",
+  captain_club: "input33",
+  captain_card: "input55",
 
-crew_4_name: "crew4_name",
-crew_4_card: "crew4_card",
-crew_4_club: "crew4_club",
+  // ΔΕΥΤΕΡΟΣ ΚΥΒΕΡΝΗΤΗΣ
+  second_captain_name: "second_captain_name",
+  second_captain_card: "second_captain_card",
+  second_captain_club: "second_captain_club",
 
-crew_5_name: "crew5_name",
-crew_5_card: "crew5_card",
-crew_5_club: "crew5_club",
+  // ΑΡΧΙΚΗ ΥΠΟΒΟΛΗ
+  original_submission_id: "originalSubmissionId",
 
-crew_6_name: "crew6_name",
-crew_6_card: "crew6_card",
-crew_6_club: "crew6_club",
+  // ΠΛΗΡΩΜΑ
+  crew_text: "input514",
 
-crew_7_name: "crew7_name",
-crew_7_card: "crew7_card",
-crew_7_club: "crew7_club",
+  crew_1_name: "crew1_name",
+  crew_1_card: "crew1_card",
+  crew_1_club: "crew1_club",
 
-crew_8_name: "crew8_name",
-crew_8_card: "crew8_card",
-crew_8_club: "crew8_club",
+  crew_2_name: "crew2_name",
+  crew_2_card: "crew2_card",
+  crew_2_club: "crew2_club",
 
-crew_9_name: "crew9_name",
-crew_9_card: "crew9_card",
-crew_9_club: "crew9_club",
+  crew_3_name: "crew3_name",
+  crew_3_card: "crew3_card",
+  crew_3_club: "crew3_club",
 
-crew_10_name: "crew10_name",
-crew_10_card: "crew10_card",
-crew_10_club: "crew10_club",
+  crew_4_name: "crew4_name",
+  crew_4_card: "crew4_card",
+  crew_4_club: "crew4_club",
 
-crew_preview: "crew_preview",
-crew_json: "crew_json",
+  crew_5_name: "crew5_name",
+  crew_5_card: "crew5_card",
+  crew_5_club: "crew5_club",
 
-crew_pdf_aa: "crewpdf_aa",
-crew_pdf_name: "crewpdf_name",
-crew_pdf_card: "crewpdf_card",
-crew_pdf_club: "crewpdf_club",
-removed_pdf_aa: "removedpdf_aa",
-removed_pdf_name: "removedpdf_name",
-removed_pdf_card: "removedpdf_card",
-removed_pdf_club: "removedpdf_club",
+  crew_6_name: "crew6_name",
+  crew_6_card: "crew6_card",
+  crew_6_club: "crew6_club",
 
-wosr_member_1: "wosr_member_1",
-wosr_member_2: "wosr_member_2"
-    };
+  crew_7_name: "crew7_name",
+  crew_7_card: "crew7_card",
+  crew_7_club: "crew7_club",
+
+  crew_8_name: "crew8_name",
+  crew_8_card: "crew8_card",
+  crew_8_club: "crew8_club",
+
+  crew_9_name: "crew9_name",
+  crew_9_card: "crew9_card",
+  crew_9_club: "crew9_club",
+
+  crew_10_name: "crew10_name",
+  crew_10_card: "crew10_card",
+  crew_10_club: "crew10_club",
+
+  // ΠΡΟΕΠΙΣΚΟΠΗΣΗ / JSON
+  crew_preview: "crew_preview",
+  crew_json: "crew_json",
+
+  // ΠΕΔΙΑ ΓΙΑ PDF ΠΛΗΡΩΜΑΤΟΣ
+  crew_pdf_aa: "crewpdf_aa",
+  crew_pdf_name: "crewpdf_name",
+  crew_pdf_card: "crewpdf_card",
+  crew_pdf_club: "crewpdf_club",
+
+  // ΠΕΔΙΑ ΑΛΛΑΓΗΣ
+  crew_change_text: "crew_change_text",
+  crew_change_date: "crew_change_date",
+
+  // ΠΡΟΣΩΡΙΝΑ ΟΝΟΜΑΤΑ ΓΙΑ ΑΦΑΙΡΕΘΕΝΤΑ
+  removed_pdf_aa: "removedpdf_aa",
+  removed_pdf_name: "removedpdf_name",
+  removed_pdf_card: "removedpdf_card",
+  removed_pdf_club: "removedpdf_club",
+
+  // WS OSR
+  wosr_member_1: "wosr_member_1",
+  wosr_member_2: "wosr_member_2"
+};
 
     const sailInput = document.getElementById("sailNumber");
     const searchBtn = document.getElementById("searchBtn");
