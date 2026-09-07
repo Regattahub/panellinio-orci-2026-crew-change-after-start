@@ -1498,7 +1498,59 @@ params.set(fieldNames.crew_json, JSON.stringify(
   }))
 ));
 
-// AFTER START:
+// ============================================================
+ // ΝΕΑ ΠΕΔΙΑ ΑΛΛΑΓΗΣ ΠΛΗΡΩΜΑΤΟΣ
+ // input553 = ΜΕΛΟΣ ΠΟΥ ΠΡΟΣΤΕΘΗΚΕ
+ // input554 = ΜΕΛΟΣ ΠΟΥ ΑΦΑΙΡΕΘΗΚΕ
+ // Παίρνουμε τα στοιχεία ΑΠΕΥΘΕΙΑΣ από τις επιλογές της τρέχουσας αλλαγής.
+ // ============================================================
+
+ const addedRowsForJotform = [];
+
+ document.querySelectorAll("#addedCrewTable tbody tr").forEach((tr) => {
+   if (String(tr.dataset.cardStatus || "").trim() !== "valid") return;
+
+   const card = String(tr.querySelector("input")?.value || "").trim();
+   const name = String(tr.querySelector(".name")?.innerText || "").trim();
+   const club = String(tr.querySelector(".club")?.innerText || "").trim();
+
+   if (name || card) {
+     addedRowsForJotform.push({
+       name: name,
+       card: card,
+       club: club
+     });
+   }
+ });
+
+ function formatChangedMembersForJotform(rows) {
+   return (Array.isArray(rows) ? rows : [])
+     .map((member) => {
+       const name = String(member?.name || "").trim();
+       const card = String(member?.card || "").trim();
+       const club = String(member?.club || "").trim();
+
+       return [
+         name,
+         card ? "Δελτίο " + card : "",
+         club
+       ].filter(Boolean).join(" – ");
+     })
+     .filter(Boolean)
+     .join(" ; ");
+ }
+
+ params.set(
+   "input553",
+   formatChangedMembersForJotform(addedRowsForJotform)
+ );
+
+ params.set(
+   "input554",
+   formatChangedMembersForJotform(removedRows)
+ );
+
+ // AFTER START:
  // Δημιουργούμε ΝΕΑ ανεξάρτητη υποβολή στη νέα Jotform.
  // Δεν ανοίγουμε /edit/ και δεν τροποποιούμε την αρχική υποβολή.
  const queryString = Array.from(params.entries())
