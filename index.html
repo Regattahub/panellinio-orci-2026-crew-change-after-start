@@ -1349,6 +1349,104 @@ function getCrewPdfRows() {
 
   return rows;
 }
+
+/*
+ * ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ ΠΛΗΡΩΜΑΤΟΣ
+ * -----------------------------
+ * Παίρνουμε ΜΟΝΟ τα μέλη που υπήρχαν στην αρχική κατάσταση
+ * όταν άνοιξε η οθόνη αλλαγής.
+ *
+ * Σημαντικό:
+ * - ΔΕΝ αφαιρούμε όσα τσεκαρίστηκαν για αφαίρεση.
+ * - ΔΕΝ προσθέτουμε τα νέα μέλη της τρέχουσας αλλαγής.
+ * - Άρα η λίστα αυτή μένει σταθερή σε όλη τη συγκεκριμένη δήλωση.
+ */
+function getInitialCrewPdfRows() {
+  const rows = [];
+
+  document.querySelectorAll(".removeCrewCheck").forEach((check) => {
+    const role = String(check.dataset.role || "crew").trim();
+
+    // Ο Κυβερνήτης Β περνά χωριστά στα δικά του πεδία.
+    if (role !== "crew") return;
+
+    const name = String(check.dataset.name || "").trim();
+    const card = String(check.dataset.card || "").trim();
+    const club = String(check.dataset.club || "").trim();
+
+    if (name || card || club) {
+      rows.push({
+        name,
+        card,
+        club
+      });
+    }
+  });
+
+  return rows;
+}
+
+/*
+ * Πλήρης, παγωμένη αρχική κατάσταση για εμφάνιση μέσα στη Jotform
+ * και για χρήση στο PDF.
+ *
+ * Περιλαμβάνει:
+ * - Κυβερνήτη Α
+ * - Κυβερνήτη Β (αν υπάρχει)
+ * - Όλο το αρχικό πλήρωμα
+ */
+function buildInitialCrewStateText(data, crewRows) {
+  const lines = [];
+  let aa = 1;
+
+  function addLine(role, name, card, club) {
+    name = String(name || "").trim();
+    card = String(card || "").trim();
+    club = shortClubName(String(club || "").trim());
+
+    if (!name && !card && !club) return;
+
+    lines.push(
+      String(aa) + ". " +
+      role + " | " +
+      name + " | " +
+      card + " | " +
+      club
+    );
+
+    aa++;
+  }
+
+  addLine(
+    "ΚΥΒΕΡΝΗΤΗΣ Α",
+    data.captain_name,
+    data.captain_card,
+    data.captain_club ||
+      data.skipper_club ||
+      data.skipperClub ||
+      data["ΟΜΙΛΟΣ ΚΥΒΕΡΝΗΤΗ"] ||
+      ""
+  );
+
+  addLine(
+    "ΚΥΒΕΡΝΗΤΗΣ Β",
+    data.second_captain_name,
+    data.second_captain_card,
+    data.second_captain_club
+  );
+
+  (Array.isArray(crewRows) ? crewRows : []).forEach((row) => {
+    addLine(
+      "ΜΕΛΟΣ ΠΛΗΡΩΜΑΤΟΣ",
+      row.name,
+      row.card,
+      row.club
+    );
+  });
+
+  return lines.join("\n");
+}
+
     function getRemovedCrewRows() {
   const rows = [];
 
@@ -1393,22 +1491,75 @@ function buildPrefillUrl(data) {
   params.set(fieldNames.orc_class_check, data.orc_class_check || "");
 
 params.set(fieldNames.captain_name, data.captain_name || "");
-  params.set("skipperName", data.captain_name || "");
-  params.set(fieldNames.captain_club, document.querySelector("#crewScreen .club")?.innerText || "");
-const captainCard = data.captain_card || data.skipper_card || data.skipperCard || data.captainCard || data["ΑΡΙΘΜΟΣ  ΑΘΛ. ΔΕΛΤΙΟΥ ΕΙΟ"] || data["ΑΡΙΘΜΟΣ ΑΘΛ. ΔΕΛΤΙΟΥ ΕΙΟ"] || data["ΑΡΙΘΜΟΣ  ΑΘΛ. ΔΕΛΤΙΟΥ ΚΥΒΕΡΝΗΤΗ"] || data["ΑΡΙΘΜΟΣ ΑΘΛ. ΔΕΛΤΙΟΥ ΚΥΒΕΡΝΗΤΗ"] || document.querySelector('#crewScreen input:not([type="checkbox"]):not([type="radio"])')?.value || "";
+params.set("skipperName", data.captain_name || "");
+
+const captainClub =
+  data.captain_club ||
+  data.skipper_club ||
+  data.skipperClub ||
+  data["ΟΜΙΛΟΣ ΚΥΒΕΡΝΗΤΗ"] ||
+  "";
+
+params.set(fieldNames.captain_club, captainClub);
+
+const captainCard =
+  data.captain_card ||
+  data.skipper_card ||
+  data.skipperCard ||
+  data.captainCard ||
+  data["ΑΡΙΘΜΟΣ  ΑΘΛ. ΔΕΛΤΙΟΥ ΕΙΟ"] ||
+  data["ΑΡΙΘΜΟΣ ΑΘΛ. ΔΕΛΤΙΟΥ ΕΙΟ"] ||
+  data["ΑΡΙΘΜΟΣ  ΑΘΛ. ΔΕΛΤΙΟΥ ΚΥΒΕΡΝΗΤΗ"] ||
+  data["ΑΡΙΘΜΟΣ ΑΘΛ. ΔΕΛΤΙΟΥ ΚΥΒΕΡΝΗΤΗ"] ||
+  "";
 
 params.set(fieldNames.captain_card, captainCard);
-  const originalSubmissionId = data.submission_id || data.submissionId || data.originalSubmissionId || data["Submission ID"] || data["SubmissionID"] || "";
+
+/*
+ * Ο Κυβερνήτης Β είναι επίσης μέρος της ΠΑΓΩΜΕΝΗΣ αρχικής κατάστασης.
+ */
+params.set(
+  fieldNames.second_captain_name,
+  data.second_captain_name || ""
+);
+
+params.set(
+  fieldNames.second_captain_card,
+  data.second_captain_card || ""
+);
+
+params.set(
+  fieldNames.second_captain_club,
+  data.second_captain_club || ""
+);
+
+const originalSubmissionId =
+  data.submission_id ||
+  data.submissionId ||
+  data.originalSubmissionId ||
+  data["Submission ID"] ||
+  data["SubmissionID"] ||
+  "";
 
 params.set(fieldNames.original_submission_id, originalSubmissionId);
- const crewTextForPreview = buildCrewTextForPdf();
- params.set(fieldNames.crew_text, crewTextForPreview);
 
- // Το ίδιο κείμενο το στέλνουμε και με καθαρό Unique Name,
- // ώστε να μπορεί να γεμίσει ένα πεδίο Long Text με Unique Name: crew_text
- params.set("crew_text", crewTextForPreview);
+/*
+ * ΠΑΓΩΜΕΝΗ ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ:
+ * Δεν χρησιμοποιούμε το τελικό πλήρωμα της σημερινής αλλαγής.
+ * Χρησιμοποιούμε μόνο τα μέλη που υπήρχαν όταν φορτώθηκε η αρχική κατάσταση.
+ */
+const crewPdfRows = getInitialCrewPdfRows();
 
-  const crewPdfRows = getCrewPdfRows();
+const crewTextForPreview =
+  buildInitialCrewStateText(
+    data,
+    crewPdfRows
+  );
+
+params.set(fieldNames.crew_text, crewTextForPreview);
+
+// Το ίδιο κείμενο στέλνεται και με το καθαρό Unique Name.
+params.set("crew_text", crewTextForPreview);
 const crewPdfAA = [];
 const crewPdfName = [];
 const crewPdfCard = [];
@@ -1486,10 +1637,23 @@ crewPdfRows.forEach((row, index) => {
     "\n";
 });
 
-params.set(fieldNames.crew_preview, crewTextForPreview);
-  params.set("crewAdded", crewTextForPreview);
+/*
+ * Η "Προεπισκόπηση Πληρώματος" στη Jotform είναι πλέον η
+ * ΠΑΓΩΜΕΝΗ ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ και δεν αλλάζει με τη σημερινή τροποποίηση.
+ */
+params.set(
+  fieldNames.crew_preview,
+  crewTextForPreview
+);
 
-// Κρατάμε και όλο το πλήρωμα σε JSON για επόμενη φάση/πίνακα μέσα στη Jotform
+// Διατηρείται για συμβατότητα με το υπάρχον form mapping.
+params.set(
+  "crewAdded",
+  crewTextForPreview
+);
+
+// Το CREW_JSON της νέας δήλωσης κρατά επίσης το αρχικό πλήρωμα,
+// όχι το τροποποιημένο πλήρωμα της σημερινής αλλαγής.
 params.set(fieldNames.crew_json, JSON.stringify(
   crewPdfRows.map((row) => ({
     name: row.name || "",
