@@ -1105,6 +1105,11 @@ const fieldNames = {
   crew_change_text: "crew_change_text",
   crew_change_date: "crew_change_date",
 
+  // ΠΕΔΙΑ PDF ΓΙΑ ΜΕΛΗ ΠΟΥ ΠΡΟΣΤΙΘΕΝΤΑΙ
+added_pdf_aa: "addedpdf_aa",
+added_pdf_name: "addedpdf_name",
+added_pdf_card: "addedpdf_card",
+added_pdf_club: "addedpdf_club",
   // ΠΡΟΣΩΡΙΝΑ ΟΝΟΜΑΤΑ ΓΙΑ ΑΦΑΙΡΕΘΕΝΤΑ
   removed_pdf_aa: "removedpdf_aa",
   removed_pdf_name: "removedpdf_name",
@@ -1687,6 +1692,42 @@ params.set(fieldNames.crew_json, JSON.stringify(
    }
  });
 
+  // ============================================================
+// PDF ΣΤΗΛΕΣ - ΜΕΛΗ ΠΟΥ ΠΡΟΣΤΙΘΕΝΤΑΙ
+// ============================================================
+const addedPdfAA = [];
+const addedPdfName = [];
+const addedPdfCard = [];
+const addedPdfClub = [];
+
+addedRowsForJotform.forEach((row, index) => {
+  addedPdfAA.push(String(index + 1));
+  addedPdfName.push(cutForPdf(row.name || "", 24));
+  addedPdfCard.push(row.card || "");
+  addedPdfClub.push(
+    cutForPdf(shortClubName(row.club || ""), 28)
+  );
+});
+
+params.set(
+  fieldNames.added_pdf_aa,
+  addedPdfAA.join("\n")
+);
+
+params.set(
+  fieldNames.added_pdf_name,
+  addedPdfName.join("\n")
+);
+
+params.set(
+  fieldNames.added_pdf_card,
+  addedPdfCard.join("\n")
+);
+
+params.set(
+  fieldNames.added_pdf_club,
+  addedPdfClub.join("\n")
+);
  function formatChangedMembersForJotform(rows) {
    return (Array.isArray(rows) ? rows : [])
      .map((member) => {
