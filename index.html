@@ -3708,7 +3708,7 @@ if (changeWosr) {
       submitButton.textContent = "ΠΑΡΑΚΑΛΟΥΜΕ ΠΕΡΙΜΕΝΕΤΕ...";
     }
 
-    await new Promise(resolve => setTimeout(resolve, 80));
+    
 
     setStatus(
       "Προετοιμάζεται η νέα ανεξάρτητη δήλωση αλλαγής πληρώματος...",
@@ -3721,7 +3721,7 @@ if (changeWosr) {
     // Τα τελικά στοιχεία περνούν ως prefill στη ΝΕΑ Jotform.
     const newFormUrl = buildPrefillUrl(lastFoundData);
 
-    window.location.href = newFormUrl;
+    window.location.assign(newFormUrl);
     return;
 
   } catch (error) {
